@@ -128,3 +128,87 @@ class Estoque:
         """
         termo = termo.strip().lower()
         return [p for p in self._produtos if termo in p.nome.lower()]
+
+        # ------------------------------------------------------------------
+    # Edição
+    # ------------------------------------------------------------------
+
+    def editar(
+        self,
+        codigo: str,
+        nome: str | None = None,
+        categoria: str | None = None,
+        preco: float | None = None,
+        quantidade: int | None = None,
+    ) -> Produto:
+        """
+        Edita campos do produto localizado por código.
+        Usa busca binária para encontrar o produto → O(log n).
+        """
+        produto = self.buscar_por_codigo(codigo)
+
+        if nome is not None:
+            produto.nome = Produto.validar_nome(nome)
+        if categoria is not None:
+            produto.categoria = Produto.validar_categoria(categoria)
+        if preco is not None:
+            produto.preco = Produto.validar_preco(preco)
+        if quantidade is not None:
+            produto.quantidade = Produto.validar_quantidade(quantidade)
+
+        return produto
+    
+    # ------------------------------------------------------------------
+    # Vendas
+    # ------------------------------------------------------------------
+
+    def registrar_venda(self, codigo: str, quantidade: int) -> dict:
+        """
+        Reduz o estoque ao registrar uma venda.
+        Valida disponibilidade antes de confirmar.
+        Complexidade: O(log n) pela busca binária.
+        """
+        if quantidade <= 0:
+            raise ValueError("Quantidade vendida deve ser maior que zero.")
+
+        produto = self.buscar_por_codigo(codigo)
+
+        if produto.quantidade < quantidade:
+            raise ValueError(
+                f"Estoque insuficiente. Disponível: {produto.quantidade}."
+            )
+
+        produto.quantidade -= quantidade
+
+        return {
+            "codigo": produto.codigo,
+            "nome": produto.nome,
+            "quantidade_vendida": quantidade,
+            "estoque_restante": produto.quantidade,
+            "total": round(produto.preco * quantidade, 2),
+        }
+    
+    # ------------------------------------------------------------------
+    # Relatórios
+    # ------------------------------------------------------------------
+
+    def listar_por_categoria(self, categoria: str) -> list[Produto]:
+        """Filtra produtos pela categoria (case-insensitive) → O(n)."""
+        categoria = categoria.strip().lower()
+        return [p for p in self._produtos if p.categoria.lower() == categoria]
+
+    def estoque_baixo(self, limite: int = 5) -> list[Produto]:
+        """Retorna produtos com quantidade abaixo do limite → O(n)."""
+        return [p for p in self._produtos if p.quantidade < limite]
+
+    def categorias(self) -> list[str]:
+        """Retorna lista de categorias únicas cadastradas."""
+        return sorted({p.categoria for p in self._produtos})
+
+    def carregar_lista(self, produtos: list[Produto]) -> None:
+        """Popula os dois vetores a partir de uma lista (usado no carregamento do JSON)."""
+        self._produtos.clear()
+        self._ordenado.clear()
+        for p in produtos:
+            self._produtos.append(p)
+            self._inserir_ordenado(p)
