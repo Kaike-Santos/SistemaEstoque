@@ -212,3 +212,33 @@ class Estoque:
         for p in produtos:
             self._produtos.append(p)
             self._inserir_ordenado(p)
+
+            # ------------------------------------------------------------------
+    # Vendas
+    # ------------------------------------------------------------------
+
+    def registrar_venda(self, codigo: str, quantidade: int) -> dict:
+        """
+        Reduz o estoque ao registrar uma venda.
+        Valida disponibilidade antes de confirmar.
+        Complexidade: O(log n) pela busca binária.
+        """
+        if quantidade <= 0:
+            raise ValueError("Quantidade vendida deve ser maior que zero.")
+
+        produto = self.buscar_por_codigo(codigo)
+
+        if produto.quantidade < quantidade:
+            raise ValueError(
+                f"Estoque insuficiente. Disponível: {produto.quantidade}."
+            )
+
+        produto.quantidade -= quantidade
+
+        return {
+            "codigo": produto.codigo,
+            "nome": produto.nome,
+            "quantidade_vendida": quantidade,
+            "estoque_restante": produto.quantidade,
+            "total": round(produto.preco * quantidade, 2),
+        }
