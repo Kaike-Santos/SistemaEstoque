@@ -1,5 +1,4 @@
 # main.py
-# Ponto de entrada: menu principal e fluxo de navegação.
 
 import sys
 
@@ -82,7 +81,6 @@ def acao_remover() -> None:
         ui.erro(str(e))
     ui.pausar()
 
-# main.py (continuação — adicione abaixo das funções anteriores)
 
 def acao_buscar_codigo() -> None:
     ui.cabecalho("Buscar por Código")
@@ -164,3 +162,64 @@ def acao_ver_logs() -> None:
     ui.cabecalho("Últimas Operações")
     logs.exibir_ultimos(15)
     ui.pausar()
+
+# main.py (continuação — adicione ao final do arquivo)
+
+# ======================================================================
+# Menu principal
+# ======================================================================
+
+MENU = """
+  [1]  Cadastrar produto
+  [2]  Editar produto
+  [3]  Remover produto
+  [4]  Buscar por código
+  [5]  Buscar por nome
+  [6]  Registrar venda
+  [7]  Listar todos (ordenado por código)
+  [8]  Listar por categoria
+  [9]  Relatório de estoque baixo
+  [10] Ver últimas operações (log)
+  [0]  Sair
+"""
+
+ACOES = {
+    "1": acao_cadastrar,
+    "2": acao_editar,
+    "3": acao_remover,
+    "4": acao_buscar_codigo,
+    "5": acao_buscar_nome,
+    "6": acao_registrar_venda,
+    "7": acao_listar_ordenado,
+    "8": acao_listar_categoria,
+    "9": acao_estoque_baixo,
+    "10": acao_ver_logs,
+}
+
+
+def loop_principal() -> None:
+    while True:
+        ui.cabecalho(f"Sistema de Estoque  |  {estoque.total()} produto(s)")
+        print(MENU)
+        opcao = input("  Escolha uma opção: ").strip()
+
+        if opcao == "0":
+            logs.registrar("SISTEMA", "Encerrado")
+            ui.sucesso("Sistema encerrado. Até logo!")
+            sys.exit(0)
+
+        acao = ACOES.get(opcao)
+        if acao:
+            acao()
+        else:
+            ui.erro("Opção inválida.")
+            ui.pausar()
+
+
+# ======================================================================
+# Entrada
+# ======================================================================
+
+if __name__ == "__main__":
+    inicializar()
+    loop_principal()

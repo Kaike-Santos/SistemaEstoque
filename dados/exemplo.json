@@ -1,0 +1,7 @@
+[
+  {"codigo": "A001", "nome": "Caneta Azul", "categoria": "Papelaria", "preco": 2.50, "quantidade": 100},
+  {"codigo": "A002", "nome": "Caderno 100fls", "categoria": "Papelaria", "preco": 15.90, "quantidade": 3},
+  {"codigo": "B001", "nome": "Mouse USB", "categoria": "Informática", "preco": 49.90, "quantidade": 20},
+  {"codigo": "B002", "nome": "Teclado ABNT2", "categoria": "Informática", "preco": 89.90, "quantidade": 2},
+  {"codigo": "C001", "nome": "Café 500g", "categoria": "Alimentos", "preco": 18.75, "quantidade": 50}
+]
